@@ -47,6 +47,12 @@
       color: var(--primary-color);
     }
 
+    p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
     .container {
       background: var(--card-bg);
       border-radius: 1rem;
@@ -69,10 +75,10 @@
       font-size: 1rem;
       background-color: var(--input-bg);
       color: var(--text-color);
-      resize: vertical;
     }
 
     textarea {
+      resize: vertical;
       min-height: 100px;
     }
 
@@ -148,7 +154,7 @@
   <h1>QR Code Generator</h1>
 
   <div class="container">
-    <textarea id="input_text" placeholder="Enter text or URLs (multiple lines allowed)..." autocomplete="off"></textarea>
+    <textarea id="input_text" placeholder="Enter text or URL..." autocomplete="off"></textarea>
 
     <div class="color-picker">
       <label>Foreground:
@@ -184,28 +190,15 @@
       const qrSize = parseInt(document.getElementById("qrSize").value) || 180;
 
       if (!textInput) {
-        alert("Please enter text to generate a QR code.");
+        alert("Please enter text.");
         return;
       }
 
-      createAndShowQRCode(textInput, fgColor, bgColor, qrSize);
+      createAndOpenQRCode(textInput, fgColor, bgColor, qrSize);
     });
 
-    function createAndShowQRCode(data, fgColor, bgColor, size) {
-      // Remove existing QR result
-      const oldQR = document.getElementById("qrResult");
-      if (oldQR) oldQR.remove();
-
-      const qrDiv = document.createElement("div");
-      qrDiv.id = "qrResult";
-      qrDiv.style.marginTop = "2rem";
-      qrDiv.style.textAlign = "center";
-
+    function createAndOpenQRCode(data, fgColor, bgColor, size) {
       const tempDiv = document.createElement("div");
-      qrDiv.appendChild(tempDiv);
-
-      document.body.appendChild(qrDiv);
-
       const qr = new QRCode(tempDiv, {
         text: data,
         width: size,
@@ -219,20 +212,52 @@
         const img = tempDiv.querySelector("img") || tempDiv.querySelector("canvas");
         const dataUrl = img.tagName === "IMG" ? img.src : img.toDataURL("image/png");
 
-        const downloadLink = document.createElement("a");
-        downloadLink.href = dataUrl;
-        downloadLink.download = "qr_code.png";
-        downloadLink.textContent = "Download QR Code";
-        downloadLink.style.display = "inline-block";
-        downloadLink.style.marginTop = "1rem";
-        downloadLink.style.padding = "0.8rem 1.5rem";
-        downloadLink.style.backgroundColor = "#6c63ff";
-        downloadLink.style.color = "#fff";
-        downloadLink.style.textDecoration = "none";
-        downloadLink.style.borderRadius = "0.5rem";
-        downloadLink.style.fontWeight = "bold";
-
-        qrDiv.appendChild(downloadLink);
+        const newTab = window.open();
+        newTab.document.write(`
+          <html>
+            <head>
+              <title>Generated QR</title>
+              <style>
+                body {
+                  font-family: 'Poppins', sans-serif;
+                  text-align: center;
+                  padding: 2rem;
+                  background-color: #f4f5fa;
+                  color: #333;
+                }
+                h2 {
+                  font-size: 2rem;
+                  margin-bottom: 1.5rem;
+                  color: #6c63ff;
+                }
+                img {
+                  max-width: 90%;
+                  height: auto;
+                }
+                a {
+                  display: inline-block;
+                  margin-top: 1.5rem;
+                  padding: 0.8rem 1.5rem;
+                  background-color: #6c63ff;
+                  color: white;
+                  text-decoration: none;
+                  border-radius: 0.5rem;
+                  font-weight: bold;
+                }
+                a:hover {
+                  background-color: #5848d8;
+                }
+              </style>
+            </head>
+            <body>
+              <h2>Generated QR</h2>
+              <img src="${dataUrl}" alt="QR Code"/>
+              <br/>
+              <a href="${dataUrl}" download="qr_code.png">Download PNG</a>
+            </body>
+          </html>
+        `);
+        newTab.document.close();
       }, 300);
     }
   </script>
