@@ -58,7 +58,7 @@
       transition: background 0.3s;
     }
 
-    input[type="text"],
+    textarea,
     input[type="color"],
     input[type="number"] {
       width: 100%;
@@ -69,6 +69,11 @@
       font-size: 1rem;
       background-color: var(--input-bg);
       color: var(--text-color);
+      resize: vertical;
+    }
+
+    textarea {
+      min-height: 100px;
     }
 
     .color-picker,
@@ -143,7 +148,7 @@
   <h1>QR Code Generator</h1>
 
   <div class="container">
-    <input type="text" id="input_text" placeholder="Enter text or URL..." autocomplete="off" />
+    <textarea id="input_text" placeholder="Enter text or URLs (multiple lines allowed)..." autocomplete="off"></textarea>
 
     <div class="color-picker">
       <label>Foreground:
