@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QR Code Generator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
       --primary-color: #6c63ff;
@@ -19,7 +19,7 @@
       --bg-color: #000000;
       --text-color: #f0f0f0;
       --card-bg: #151515;
-      --input-bg: #444;
+      --input-bg: #424242;
     }
 
     * {
@@ -37,36 +37,30 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 1rem;
       transition: background 0.3s, color 0.3s;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.3rem;
+      font-size: 2rem;
+      margin-bottom: 1rem;
       color: var(--primary-color);
-    }
-
-    p {
-      font-size: 1.1rem;
-      color: #666;
-      margin-bottom: 1.5rem;
+      text-align: center;
     }
 
     .container {
       background: var(--card-bg);
       border-radius: 1rem;
-      padding: 2rem;
-      max-width: 420px;
+      padding: 1.5rem;
+      max-width: 400px;
       width: 100%;
       text-align: center;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      transition: background 0.3s;
     }
 
     textarea,
-    input[type="color"],
-    input[type="number"] {
+    input[type="number"],
+    select {
       width: 100%;
       padding: 0.8rem;
       border-radius: 0.5rem;
@@ -82,27 +76,37 @@
       min-height: 100px;
     }
 
-    .color-picker,
-    .size-picker {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
+    .color-picker {
+      text-align: left;
+      margin-bottom: 1rem;
     }
 
-    .color-picker label,
+    .color-line {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .color-line label {
+      flex: 1;
+      font-size: 0.9rem;
+    }
+
+    .color-line input[type="color"] {
+      flex: 0 0 60px;
+      height: 40px;
+      border: none;
+      background: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
     .size-picker label {
       font-size: 0.9rem;
+      display: block;
+      margin-bottom: 0.3rem;
       text-align: left;
-      width: 100%;
-    }
-
-    .color-box {
-      height: 40px;
-      width: 100%;
-      padding: 0;
-      border-radius: 0.5rem;
-      border: none;
-      cursor: pointer;
     }
 
     button {
@@ -115,7 +119,6 @@
       color: #fff;
       font-weight: bold;
       transition: background-color 0.3s;
-      margin-top: 1rem;
     }
 
     button:hover {
@@ -127,79 +130,106 @@
       position: absolute;
       top: 1rem;
       right: 1rem;
+      font-size: 0.9rem;
     }
 
     .theme-toggle input {
-      transform: scale(1.3);
+      transform: scale(1.2);
+      margin-left: 0.5rem;
     }
 
-    @media (max-width: 480px) {
+    @media (min-width: 600px) {
       h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
       }
 
       .container {
-        padding: 1.5rem;
+        padding: 2rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="theme-toggle">
-    <label>
-      <input type="checkbox" id="toggleTheme" /> Dark Mode
-    </label>
+    <label>Dark Mode <input type="checkbox" id="toggleTheme" /></label>
   </div>
 
   <h1>QR Code Generator</h1>
 
   <div class="container">
-    <textarea id="input_text" placeholder="Enter text or URL..." autocomplete="off"></textarea>
+    <textarea id="input_text" placeholder="Enter text or URL..."></textarea>
 
     <div class="color-picker">
-      <label>Foreground:
-        <input type="color" id="fgColor" class="color-box" value="#000000" />
-      </label>
-      <label>Background:
-        <input type="color" id="bgColor" class="color-box" value="#ffffff" />
-      </label>
+      <div class="color-line">
+        <label for="fgColor">Foreground Color:</label>
+        <input type="color" id="fgColor" value="#000000" />
+      </div>
+      <div class="color-line">
+        <label for="bgColor">Background Color:</label>
+        <input type="color" id="bgColor" value="#ffffff" />
+      </div>
     </div>
 
     <div class="size-picker">
-      <label>QR Size (px):
-        <input type="number" id="qrSize" value="180" min="100" max="1000" />
-      </label>
+      <label for="qrSize">QR Size (px):</label>
+      <input type="number" id="qrSize" value="180" min="100" max="1000" />
+
+      <label for="sizeSelect">Quick Size Options:</label>
+      <select id="sizeSelect">
+        <option value="">Select a size</option>
+        <option value="180">180px</option>
+        <option value="250">250px</option>
+        <option value="300">300px</option>
+        <option value="400">400px</option>
+        <option value="500">500px</option>
+        <option value="600">600px</option>
+        <option value="800">800px</option>
+      </select>
     </div>
 
-    <button class="button" type="submit">Generate QR</button>
+    <button type="button" class="button">Generate QR</button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-    const btn = document.querySelector(".button");
     const toggle = document.getElementById("toggleTheme");
+    const btn = document.querySelector(".button");
+    const sizeSelect = document.getElementById("sizeSelect");
+    const qrSizeInput = document.getElementById("qrSize");
+    const fgInput = document.getElementById("fgColor");
+    const bgInput = document.getElementById("bgColor");
 
     toggle.addEventListener("change", () => {
       document.body.classList.toggle("dark");
     });
 
+    sizeSelect.addEventListener("change", () => {
+      if (sizeSelect.value) {
+        qrSizeInput.value = sizeSelect.value;
+      }
+    });
+
+    qrSizeInput.addEventListener("input", () => {
+      sizeSelect.value = "";
+    });
+
     btn.addEventListener("click", () => {
       const textInput = document.getElementById("input_text").value.trim();
-      const fgColor = document.getElementById("fgColor").value;
-      const bgColor = document.getElementById("bgColor").value;
-      const qrSize = parseInt(document.getElementById("qrSize").value) || 180;
+      const fgColor = fgInput.value;
+      const bgColor = bgInput.value;
+      const qrSize = parseInt(qrSizeInput.value) || 180;
 
       if (!textInput) {
         alert("Please enter text.");
         return;
       }
 
-      createAndOpenQRCode(textInput, fgColor, bgColor, qrSize);
+      generateQRCode(textInput, fgColor, bgColor, qrSize);
     });
 
-    function createAndOpenQRCode(data, fgColor, bgColor, size) {
+    function generateQRCode(data, fgColor, bgColor, size) {
       const tempDiv = document.createElement("div");
-      const qr = new QRCode(tempDiv, {
+      new QRCode(tempDiv, {
         text: data,
         width: size,
         height: size,
